@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peblet Pay - Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-white">
+    <div id="root"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/react@17/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <script type="text/babel">
+        function PebletPayOrder() {
+            const [formData, setFormData] = React.useState({
+                tujuan: "",
+                whatsapp: "",
+                email: "",
+                paymentMethod: "E-Wallet",
+            });
+
+            const handleChange = (e) => {
+                setFormData({ ...formData, [e.target.name]: e.target.value });
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await axios.post("http://localhost:5000/submit-order", formData);
+                    alert(response.data.message);
+                } catch (error) {
+                    console.error("Error submitting order:", error);
+                    alert("Failed to place order. Please try again.");
+                }
+            };
+
+            return (
+                <div className="container mt-4 text-white bg-dark p-4 rounded">
+                    <h2 className="text-center">Peblet Pay - Spotify Premium</h2>
+                    <div className="card bg-secondary text-white p-4">
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-3">
+                                <label className="form-label">Pilih Produk</label>
+                                <select className="form-select" disabled>
+                                    <option>Product Not Found</option>
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Lengkapi Data</label>
+                                <input type="text" className="form-control" placeholder="Tujuan" name="tujuan" value={formData.tujuan} onChange={handleChange} required />
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Pilih Pembayaran</label>
+                                <select className="form-select" name="paymentMethod" value={formData.paymentMethod} onChange={handleChange}>
+                                    <option value="E-Wallet">E-Wallet</option>
+                                    <option value="QRIS">QRIS</option>
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Data Tambahan</label>
+                                <input type="text" className="form-control" placeholder="Whatsapp" name="whatsapp" value={formData.whatsapp} onChange={handleChange} required />
+                                <input type="email" className="form-control mt-2" placeholder="user@pebletpay.com" name="email" value={formData.email} onChange={handleChange} required />
+                            </div>
+                            <button type="submit" className="btn btn-success w-100">Beli Sekarang</button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<PebletPayOrder />, document.getElementById("root"));
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
